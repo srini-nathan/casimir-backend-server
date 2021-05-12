@@ -1,6 +1,6 @@
 import { ApolloServer } from 'apollo-server'
-import { schema } from './schema'
-import { createContext } from './context'
+import { schema } from './graphql/schema'
+import { createContext } from './graphql/context'
 import depthLimit from 'graphql-depth-limit';
 
 const PORT_NUMBER = process.env.TS_NODE_DEV === 'true'

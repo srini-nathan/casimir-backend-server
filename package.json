@@ -7,7 +7,7 @@
     "deploy": "npx prisma studio",
     "clean": "rm -rf dist",
     "generate:prisma": "prisma generate",
-    "generate:nexus": "ts-node --transpile-only src/schema",
+    "generate:nexus": "ts-node --transpile-only src/graphql/schema",
     "generate": "npm -s run generate:prisma && npm -s run generate:nexus",
     "dev": "ts-node-dev --no-notify --respawn --transpile-only src/server",
     "build": "npm -s run clean && npm -s run generate && tsc",
@@ -17,15 +17,20 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^2.22.1",
+    "@prisma/client": "^2.21.0",
     "apollo-server": "^2.24.0",
+    "bcryptjs": "^2.4.3",
     "console-stamp": "^3.0.2",
     "graphql": "^15.5.0",
     "graphql-depth-limit": "^1.1.0",
-    "nexus": "^1.0.0"
+    "jsonwebtoken": "^8.5.1",
+    "nexus": "^1.0.0",
+    "nexus-plugin-prisma": "^0.34.1"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
     "@types/graphql-depth-limit": "^1.1.2",
+    "@types/jsonwebtoken": "^8.5.1",
     "@types/node": "^15.0.2",
     "@types/node-fetch": "^2.5.10",
     "prisma": "^2.22.1",
