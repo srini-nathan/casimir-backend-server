@@ -2,13 +2,22 @@
 ### Do not make changes to this file directly
 
 
+enum ApiFeedback {
+  CHANGE_PASSWORD
+  SUCCESS
+}
+
 """response token object"""
 type AuthPayload {
-  errors: [RequestError!]!
-  message: String
-  success: Boolean!
+  feedback: ApiFeedback
+  resetToken: String
   token: String
 }
+
+"""
+A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar Date
 
 scalar JSON
 
@@ -16,12 +25,15 @@ type Mutation {
   """Create Token"""
   createToken(data: UserAuthDataInput!): AuthPayload!
 
+  """Login"""
+  signin(data: UserSiginDataInput!): AuthPayload!
+
   """Register"""
-  signup(data: UserSignupDataInput!): Boolean!
+  signup(data: UserSignupDataInput!): AuthPayload!
 }
 
 type Query {
-  ok: Boolean!
+  me: User
 }
 
 """Объект ошибки"""
@@ -30,7 +42,24 @@ type RequestError {
   message: String!
 }
 
+type User {
+  """When Created"""
+  createdAt: Date!
+  email: String
+  fullname: String
+  id: String!
+
+  """When Updated"""
+  updatedAt: Date!
+  username: String
+}
+
 input UserAuthDataInput {
+  username: String!
+}
+
+input UserSiginDataInput {
+  password: String!
   username: String!
 }
 

@@ -6,8 +6,23 @@
 
 import { Context } from "./../context"
 import { FieldAuthorizeResolver } from "nexus/dist/plugins/fieldAuthorizePlugin"
-
-
+import { core } from "nexus"
+declare global {
+  interface NexusGenCustomInputMethods<TypeName extends string> {
+    /**
+     * A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    date<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "Date";
+  }
+}
+declare global {
+  interface NexusGenCustomOutputMethods<TypeName extends string> {
+    /**
+     * A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    date<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "Date";
+  }
+}
 declare global {
   interface NexusGenCustomOutputProperties<TypeName extends string> {
     crud: NexusPrisma<TypeName, 'crud'>
@@ -23,6 +38,10 @@ export interface NexusGenInputs {
   UserAuthDataInput: { // input type
     username: string; // String!
   }
+  UserSiginDataInput: { // input type
+    password: string; // String!
+    username: string; // String!
+  }
   UserSignupDataInput: { // input type
     email: string; // String!
     fullname?: string | null; // String
@@ -32,6 +51,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  ApiFeedback: "CHANGE_PASSWORD" | "SUCCESS"
 }
 
 export interface NexusGenScalars {
@@ -40,14 +60,14 @@ export interface NexusGenScalars {
   Float: number
   Boolean: boolean
   ID: string
+  Date: any
   JSON: any
 }
 
 export interface NexusGenObjects {
   AuthPayload: { // root type
-    errors: NexusGenRootTypes['RequestError'][]; // [RequestError!]!
-    message?: string | null; // String
-    success: boolean; // Boolean!
+    feedback?: NexusGenEnums['ApiFeedback'] | null; // ApiFeedback
+    resetToken?: string | null; // String
     token?: string | null; // String
   }
   Mutation: {};
@@ -55,6 +75,14 @@ export interface NexusGenObjects {
   RequestError: { // root type
     key: string; // String!
     message: string; // String!
+  }
+  User: { // root type
+    createdAt: NexusGenScalars['Date']; // Date!
+    email?: string | null; // String
+    fullname?: string | null; // String
+    id: string; // String!
+    updatedAt: NexusGenScalars['Date']; // Date!
+    username?: string | null; // String
   }
 }
 
@@ -66,45 +94,61 @@ export interface NexusGenUnions {
 
 export type NexusGenRootTypes = NexusGenObjects
 
-export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
+export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnums
 
 export interface NexusGenFieldTypes {
   AuthPayload: { // field return type
-    errors: NexusGenRootTypes['RequestError'][]; // [RequestError!]!
-    message: string | null; // String
-    success: boolean; // Boolean!
+    feedback: NexusGenEnums['ApiFeedback'] | null; // ApiFeedback
+    resetToken: string | null; // String
     token: string | null; // String
   }
   Mutation: { // field return type
     createToken: NexusGenRootTypes['AuthPayload']; // AuthPayload!
-    signup: boolean; // Boolean!
+    signin: NexusGenRootTypes['AuthPayload']; // AuthPayload!
+    signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
   }
   Query: { // field return type
-    ok: boolean; // Boolean!
+    me: NexusGenRootTypes['User'] | null; // User
   }
   RequestError: { // field return type
     key: string; // String!
     message: string; // String!
   }
+  User: { // field return type
+    createdAt: NexusGenScalars['Date']; // Date!
+    email: string | null; // String
+    fullname: string | null; // String
+    id: string; // String!
+    updatedAt: NexusGenScalars['Date']; // Date!
+    username: string | null; // String
+  }
 }
 
 export interface NexusGenFieldTypeNames {
   AuthPayload: { // field return type name
-    errors: 'RequestError'
-    message: 'String'
-    success: 'Boolean'
+    feedback: 'ApiFeedback'
+    resetToken: 'String'
     token: 'String'
   }
   Mutation: { // field return type name
     createToken: 'AuthPayload'
-    signup: 'Boolean'
+    signin: 'AuthPayload'
+    signup: 'AuthPayload'
   }
   Query: { // field return type name
-    ok: 'Boolean'
+    me: 'User'
   }
   RequestError: { // field return type name
     key: 'String'
     message: 'String'
+  }
+  User: { // field return type name
+    createdAt: 'Date'
+    email: 'String'
+    fullname: 'String'
+    id: 'String'
+    updatedAt: 'Date'
+    username: 'String'
   }
 }
 
@@ -112,6 +156,9 @@ export interface NexusGenArgTypes {
   Mutation: {
     createToken: { // args
       data: NexusGenInputs['UserAuthDataInput']; // UserAuthDataInput!
+    }
+    signin: { // args
+      data: NexusGenInputs['UserSiginDataInput']; // UserSiginDataInput!
     }
     signup: { // args
       data: NexusGenInputs['UserSignupDataInput']; // UserSignupDataInput!
@@ -129,7 +176,7 @@ export type NexusGenObjectNames = keyof NexusGenObjects;
 
 export type NexusGenInputNames = keyof NexusGenInputs;
 
-export type NexusGenEnumNames = never;
+export type NexusGenEnumNames = keyof NexusGenEnums;
 
 export type NexusGenInterfaceNames = never;
 

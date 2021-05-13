@@ -23,16 +23,16 @@ export const AuthMutation = extendType({
     },
 })
 
-export const AuthPayload = objectType({
-    name: 'AuthPayload',
-    description: 'response token object',
-    definition(t) {
-      t.nonNull.boolean('success')
-      t.string('message')
-      t.string('token')
-      t.nonNull.list.nonNull.field('errors', {
-        type: 'RequestError',
-      })
-    },
-  })
+// export const AuthPayload = objectType({
+//     name: 'AuthPayload',
+//     description: 'response token object',
+//     definition(t) {
+//       t.nonNull.boolean('success')
+//       t.string('message')
+//       t.string('token')
+//       t.nonNull.list.nonNull.field('errors', {
+//         type: 'RequestError',
+//       })
+//     },
+//   })
 

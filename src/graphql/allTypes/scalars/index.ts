@@ -1,4 +1,6 @@
 import { GraphQLScalarType } from 'graphql'
+import {GraphQLDate} from 'graphql-iso-date'
+import { asNexusMethod } from 'nexus'
 
 export const JSONScalar = new GraphQLScalarType({
   name: 'JSON',
@@ -13,3 +15,5 @@ export const JSONScalar = new GraphQLScalarType({
   },
   parseValue: (data: unknown) => data,
 })
+
+export const GQLDate = asNexusMethod(GraphQLDate, 'date')

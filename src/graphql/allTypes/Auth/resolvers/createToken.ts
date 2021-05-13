@@ -1,7 +1,10 @@
-import { User } from ".prisma/client"
 import { FieldResolver } from "nexus"
 import { Context } from "../../../context"
 import jwt from 'jsonwebtoken'
+import { ErrorCodesEnum } from "../../ErrorCodes"
+import NotFoundError from "../../../../common/errors/NotFoundError"
+import { enforceExists } from "../../../../common/errors/enforce"
+import { ApiFeedbackEnum } from "../../ApiFeedback"
 
 export type AuthTokenData = {
   tokenId: string;
@@ -14,25 +17,16 @@ export const createToken: FieldResolver<'Mutation', 'createToken'> = async (
   ctx
 ) => {
 
-  let success = false
-  const message = ''
-
   const { username } = args.data || {}
 
   const user = await ctx.prisma.user.findUnique({
     where: { username }
   })
-if(!user) {
-  return {
-    success,
-    message:"user does not exists",
-    errors:[],
-    token:""
 
-  }
-}
+  enforceExists(user, ErrorCodesEnum.USER_DOES_NOT_EXISTS, NotFoundError);
 
-  const Token = await ctx.prisma.token.create({
+
+  const token = await ctx.prisma.token.create({
     data: {
       User: {
         connect: {
@@ -43,15 +37,14 @@ if(!user) {
   })
 
   const tokenData: AuthTokenData = {
-    tokenId: Token.id
+    tokenId: token.id
   }
 
-  const token = jwt.sign(tokenData, ctx.APP_SECRET)
+  const appToken = jwt.sign(tokenData, ctx.APP_SECRET)
 
 
   return {
-    success: !!user,
-    errors: [],
-    token,
-  }
+    token: appToken,
+    feedback: ApiFeedbackEnum.SUCCESS
+  };
 }
